@@ -73,7 +73,7 @@ def update_irrigacao_fertilizante(selected_countries):
         x='Irrigation_Access_%',
         y='Fertilizer_Use_KG_per_HA',
         text='Country',
-        title="Distribuição Global do Uso de Irrigação e Fertilizantes por País",
+        title="Distribuição Global do Acesso a Irrigação e Uso de Fertilizantes por País",
         labels={'Irrigation_Access_%': 'Acesso à Irrigação (%)', 'Fertilizer_Use_KG_per_HA': 'Uso de Fertilizantes (KG/HA)'}
     )
 
