@@ -5,7 +5,7 @@ import pandas as pd
 import plotly.express as px
 
 # Carregar dados
-df = pd.read_csv('src/data/climate_change_impact_on_agriculture_2024.csv')
+df = pd.read_csv('data/climate_change_impact_on_agriculture_2024.csv')
 
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 
@@ -130,19 +130,19 @@ def update_average_graph(selected_countries):
     
     # Agrupar dados
     df_grouped = filtered_df.groupby('Country').agg({
-        'Pesticide_Use_KG_per_HA': 'mean',  # Média do uso de pesticidas
+        'Fertilizer_Use_KG_per_HA': 'mean',  # Média do uso de fertilizantes
         'Crop_Yield_MT_per_HA': 'mean'     # Média do rendimento agrícola
     }).reset_index()
     
     # Gráfico de dispersão
     fig = px.scatter(
         df_grouped,
-        x='Pesticide_Use_KG_per_HA',
+        x='Fertilizer_Use_KG_per_HA',
         y='Crop_Yield_MT_per_HA',
         color='Country',
-        title="Uso de Pesticidas vs Rendimento Médio da Colheita por País",
+        title="Uso de Fertilizantes vs Rendimento Médio da Colheita por País",
         labels={
-            'Pesticide_Use_KG_per_HA': 'Uso Médio de Pesticidas (KG/HA)',
+            'Fertilizer_Use_KG_per_HA': 'Uso Médio de Fertilizantes (KG/HA)',
             'Crop_Yield_MT_per_HA': 'Rendimento Médio da Colheita (MT/HA)'
         },
         template='plotly'
