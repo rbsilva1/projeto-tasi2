@@ -74,7 +74,7 @@ def update_irrigacao_fertilizante(selected_countries):
         y='Fertilizer_Use_KG_per_HA',
         text='Country',
         title="Distribuição Global do Acesso a Irrigação e Uso de Fertilizantes por País",
-        labels={'Irrigation_Access_%': 'Acesso à Irrigação (%)', 'Fertilizer_Use_KG_per_HA': 'Uso de Fertilizantes (KG/HA)'}
+        labels={'Irrigation_Access_%': 'Acesso à Irrigação (%)', 'Fertilizer_Use_KG_per_HA': 'Uso de Fertilizantes (KG/HA)', 'Country': 'Países'}
     )
 
     # Ajustes no layout
@@ -108,7 +108,8 @@ def update_media_anual(selected_countries):
         title="Média Anual de Uso de Pesticidas por Tipo de Colheita",
         labels={
             "Pesticide_Use_KG_per_HA": "Uso Médio de Pesticidas (KG/HA)",
-            "Year": "Ano"
+            "Year": "Ano",
+            "Country": "Países"
         }
     )
 
@@ -143,7 +144,8 @@ def update_average_graph(selected_countries):
         title="Uso de Fertilizantes vs Rendimento Médio da Colheita por País",
         labels={
             'Fertilizer_Use_KG_per_HA': 'Uso Médio de Fertilizantes (KG/HA)',
-            'Crop_Yield_MT_per_HA': 'Rendimento Médio da Colheita (MT/HA)'
+            'Crop_Yield_MT_per_HA': 'Rendimento Médio da Colheita (MT/HA)',
+            'Country': 'Países'
         },
         template='plotly'
     )
@@ -163,6 +165,11 @@ def update_scatterplot(selected_countries):
         size="CO2_Emissions_MT",
         hover_data=["Country", "Region"],
         title="Temperatura Média vs. Rendimento Agrícola",
+        labels={
+            "Average_Temperature_C": "Temperatura Média (ºC)",
+            "Crop_Yield_MT_per_HA": "Rendimento Agrícola (MT/HA)",
+            "Crop_Type": "Tipo de Colheita"
+        }
     )
     return fig
 
@@ -179,6 +186,11 @@ def update_linechart(selected_countries):
         color="Country",
         markers=True,
         title="Impacto Econômico ao Longo dos Anos",
+        labels= {
+            "Economic_Impact_Million_USD" : "Impacto Econômico ( Milhões de Dólares )",
+            "Year": "Anos",
+            "Country": "Países"
+        }
     )
     return fig
 
@@ -196,6 +208,9 @@ def update_worldmap(selected_countries):
         hover_name="Country",
         title="Índice de Saúde do Solo por País",
         color_continuous_scale="Viridis",
+        labels= {
+            "Soil_Health_Index": "Indicador de saúde do Solo"
+        }
     )
     return fig
 
