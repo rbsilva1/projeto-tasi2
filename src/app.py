@@ -5,7 +5,7 @@ import pandas as pd
 import plotly.express as px
 
 # Carregar dados
-df = pd.read_csv('data/climate_change_impact_on_agriculture_2024.csv')
+df = pd.read_csv('src/data/climate_change_impact_on_agriculture_2024.csv')
 
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 
@@ -73,8 +73,8 @@ def update_irrigacao_fertilizante(selected_countries):
         x='Irrigation_Access_%',
         y='Fertilizer_Use_KG_per_HA',
         text='Country',
-        title="Distribuição Global do Acesso a Irrigação e Uso de Fertilizantes por País",
-        labels={'Irrigation_Access_%': 'Acesso à Irrigação (%)', 'Fertilizer_Use_KG_per_HA': 'Uso de Fertilizantes (KG/HA)', 'Country': 'Países'}
+        title="Distribuição Global do Uso de Irrigação e Fertilizantes por País",
+        labels={'Irrigation_Access_%': 'Acesso à Irrigação (%)', 'Fertilizer_Use_KG_per_HA': 'Uso de Fertilizantes (KG/HA)'}
     )
 
     # Ajustes no layout
@@ -108,8 +108,7 @@ def update_media_anual(selected_countries):
         title="Média Anual de Uso de Pesticidas por Tipo de Colheita",
         labels={
             "Pesticide_Use_KG_per_HA": "Uso Médio de Pesticidas (KG/HA)",
-            "Year": "Ano",
-            "Country": "Países"
+            "Year": "Ano"
         }
     )
 
@@ -131,21 +130,20 @@ def update_average_graph(selected_countries):
     
     # Agrupar dados
     df_grouped = filtered_df.groupby('Country').agg({
-        'Fertilizer_Use_KG_per_HA': 'mean',  # Média do uso de fertilizantes
+        'Pesticide_Use_KG_per_HA': 'mean',  # Média do uso de pesticidas
         'Crop_Yield_MT_per_HA': 'mean'     # Média do rendimento agrícola
     }).reset_index()
     
     # Gráfico de dispersão
     fig = px.scatter(
         df_grouped,
-        x='Fertilizer_Use_KG_per_HA',
+        x='Pesticide_Use_KG_per_HA',
         y='Crop_Yield_MT_per_HA',
         color='Country',
-        title="Uso de Fertilizantes vs Rendimento Médio da Colheita por País",
+        title="Uso de Pesticidas vs Rendimento Médio da Colheita por País",
         labels={
-            'Fertilizer_Use_KG_per_HA': 'Uso Médio de Fertilizantes (KG/HA)',
-            'Crop_Yield_MT_per_HA': 'Rendimento Médio da Colheita (MT/HA)',
-            'Country': 'Países'
+            'Pesticide_Use_KG_per_HA': 'Uso Médio de Pesticidas (KG/HA)',
+            'Crop_Yield_MT_per_HA': 'Rendimento Médio da Colheita (MT/HA)'
         },
         template='plotly'
     )
@@ -165,11 +163,6 @@ def update_scatterplot(selected_countries):
         size="CO2_Emissions_MT",
         hover_data=["Country", "Region"],
         title="Temperatura Média vs. Rendimento Agrícola",
-        labels={
-            "Average_Temperature_C": "Temperatura Média (ºC)",
-            "Crop_Yield_MT_per_HA": "Rendimento Agrícola (MT/HA)",
-            "Crop_Type": "Tipo de Colheita"
-        }
     )
     return fig
 
@@ -177,21 +170,48 @@ def update_scatterplot(selected_countries):
     Output("linechart", "figure"),
     Input("country-filter", "value")
 )
-def update_linechart(selected_countries):
-    filtered_df = df if not selected_countries else df[df["Country"].isin(selected_countries)]
+def update_linechart(selected_countries: list):
+    # Filtrar o DataFrame com base nos países selecionados
+    if selected_countries:
+        filtered_df = df[df["Country"].isin(selected_countries)]
+    else:
+        filtered_df = df
+
+    # Agrupar os dados por País e Ano para evitar duplicados
+    aggregated_df = filtered_df.groupby(["Country", "Year"], as_index=False).sum()
+
+    # Criar o gráfico de linhas
     fig = px.line(
-        filtered_df,
+        aggregated_df,
         x="Year",
         y="Economic_Impact_Million_USD",
         color="Country",
         markers=True,
         title="Impacto Econômico ao Longo dos Anos",
-        labels= {
-            "Economic_Impact_Million_USD" : "Impacto Econômico ( Milhões de Dólares )",
-            "Year": "Anos",
-            "Country": "Países"
+        labels={
+            "Economic_Impact_Million_USD": "Impacto Econômico (Milhões de Dólares)",
+            "Year": "Ano",
+            "Country": "País"
         }
     )
+
+    # Melhorar o layout do gráfico
+    fig.update_layout(
+        title={
+            "text": "Impacto Econômico ao Longo dos Anos",
+            "x": 0.5,  # Centralizar o título
+            "xanchor": "center"
+        },
+        xaxis_title="Ano",
+        yaxis_title="Impacto Econômico (Milhões de Dólares)",
+        legend_title="País",
+        template="plotly_white"  # Tema mais limpo e profissional
+    )
+
+    # Adicionar personalizações para as linhas e pontos
+    fig.update_traces(line_shape="spline",  # Suavizar as linhas
+                      mode="lines+markers")  # Exibir linhas e marcadores
+
     return fig
 
 @app.callback(
@@ -208,9 +228,6 @@ def update_worldmap(selected_countries):
         hover_name="Country",
         title="Índice de Saúde do Solo por País",
         color_continuous_scale="Viridis",
-        labels= {
-            "Soil_Health_Index": "Indicador de saúde do Solo"
-        }
     )
     return fig
 
